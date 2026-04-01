@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>평행세계 랜덤 뽑기</title>
+    <style>
+        :root {
+            --primary-gold: #ffcf40;
+            --bg-dark: #0a0a0c;
+            --text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            overflow: hidden;
+            color: white;
+        }
+
+        /* 모바일 화면 비율 유지 컨테이너 (768:1344) */
+        #app {
+            position: relative;
+            width: 100vw;
+            height: 175vw; /* 768x1344 비율 계산 */
+            max-width: 500px;
+            max-height: 875px;
+            margin: 0 auto;
+            background-color: var(--bg-dark);
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+
+        .page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background-size: cover;
+            background-position: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .active { display: flex; }
+
+        /* 페이지 1: 타이틀 */
+        #page1 {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('B.png');
+            background-size: cover;
+        }
+
+        .title-group {
+            animation: floating 3s infinite ease-in-out;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--primary-gold);
+            text-shadow: var(--text-shadow);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            opacity: 0.9;
+        }
+
+        .start-btn {
+            margin-top: 50px;
+            padding: 15px 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--primary-gold);
+            color: var(--primary-gold);
+            font-size: 1.2rem;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: 0.3s;
+        }
+
+        /* 페이지 2: 가챠 대기 */
+        #page2 {
+            background-image: url('B.png');
+        }
+
+        .gacha-btn {
+            width: 250px;
+            height: auto;
+            cursor: pointer;
+            filter: drop-shadow(0 0 15px rgba(255,207,64,0.5));
+            transition: transform 0.2s;
+        }
+
+        .gacha-btn:active { transform: scale(0.9); }
+
+        /* 페이지 3: 연출 및 결과 */
+        #page-effect {
+            background: radial-gradient(circle, #4a00e0 0%, #000 70%);
+        }
+
+        .reveal-msg {
+            font-size: 1.5rem;
+            font-weight: bold;
+            animation: pulse 1s infinite;
+        }
+
+        #page-result {
+            background-color: #000;
+        }
+
+        .char-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+            animation: zoomOut 0.8s ease-out;
+        }
+
+        .info-overlay {
+            position: absolute;
+            bottom: 15%;
+            left: 0;
+            width: 100%;
+            z-index: 2;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            padding: 40px 0;
+        }
+
+        .char-name {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255,255,255,0.5);
+            margin: 0;
+            transform: skewX(-10deg);
+        }
+
+        .work-title {
+            font-size: 1.2rem;
+            color: var(--primary-gold);
+            margin-top: 10px;
+        }
+
+        .retry-btn {
+            position: absolute;
+            bottom: 50px;
+            z-index: 3;
+            padding: 12px 30px;
+            background: #fff;
+            color: #000;
+            border: none;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+        }
+
+        /* 애니메이션 */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes floating { 
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+        @keyframes zoomOut {
+            from { transform: scale(1.5); filter: brightness(3); }
+            to { transform: scale(1); filter: brightness(1); }
+        }
+
+        /* 화이트아웃 효과 */
+        .white-out {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: white;
+            z-index: 10;
+            display: none;
+            animation: flash 0.5s forwards;
+        }
+        @keyframes flash {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <section id="page1" class="page active">
+        <div class="title-group">
+            <h1>평행세계 랜덤 뽑기</h1>
+            <div class="subtitle">~당신의 아이돌을 뽑아보세요.~</div>
+        </div>
+        <button class="start-btn" onclick="showPage('page2')">입장하기</button>
+    </section>
+
+    <section id="page2" class="page">
+        <img src="R.png" alt="가챠버튼" class="gacha-btn" onclick="startGacha()">
+    </section>
+
+    <section id="page-effect" class="page" onclick="revealResult()">
+        <div class="reveal-msg">소환 중...<br>화면을 터치하세요!</div>
+    </section>
+
+    <section id="page-result" class="page">
+        <div class="white-out" id="flash"></div>
+        <img id="result-img" src="" class="char-img">
+        <div class="info-overlay">
+            <h2 id="result-name" class="char-name"></h2>
+            <div id="result-work" class="work-title"></div>
+        </div>
+        <button class="retry-btn" onclick="showPage('page2')">다시 뽑기</button>
+    </section>
+</div>
+
+<script>
+    const characterData = [
+        { id: 1, name: "칼덴", work: "｜Nova Core V2｜" },
+        { id: 2, name: "이드", work: "｜Nova Core V2｜" },
+        { id: 3, name: "듀렌", work: "｜Nova Core V2｜" },
+        { id: 4, name: "리오르", work: "｜Nova Core V2｜" },
+        { id: 5, name: "세르", work: "｜Nova Core V2｜" },
+        { id: 6, name: "글리치", work: "빌런플레이어" },
+        { id: 7, name: "넥로", work: "빌런플레이어" },
+        { id: 8, name: "블레인", work: "빌런플레이어" },
+        { id: 9, name: "리른", work: "남편은 버리고 내게와" },
+        { id: 10, name: "나인", work: "남편은 버리고 내게와" },
+        { id: 11, name: "제르온", work: "남편은 버리고 내게와" },
+        { id: 12, name: "에커드", work: "남편은 버리고 내게와" },
+        { id: 13, name: "티아", work: "아카데미 F급 낙제생" },
+        { id: 14, name: "페리", work: "아카데미 F급 낙제생" },
+        { id: 15, name: "카샨", work: "아카데미 F급 낙제생" },
+        { id: 16, name: "리안", work: "아카데미 F급 낙제생" },
+        { id: 17, name: "힐더", work: "아카데미 F급 낙제생" },
+        { id: 18, name: "휴", work: "야 성녀 벌려" },
+        { id: 19, name: "아스", work: "야 성녀 벌려" },
+        { id: 20, name: "프란츠", work: "야 성녀 벌려" },
+        { id: 21, name: "사이카", work: "지하실" },
+        { id: 22, name: "아던", work: "죽은 연인의 대체품" },
+        { id: 23, name: "능천화", work: "처녀↔동정 방어전" },
+        { id: 24, name: "사언", work: "뭐해? 웃어" },
+        { id: 25, name: "리겔", work: "Orbis Talis" },
+        { id: 26, name: "킬리언", work: "Orbis Talis" },
+        { id: 27, name: "론", work: "Orbis Talis" }
+    ];
+
+    let currentPick = null;
+
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+    }
+
+    function startGacha() {
+        // 랜덤 캐릭터 선택
+        const randomIndex = Math.floor(Math.random() * characterData.length);
+        currentPick = characterData[randomIndex];
+        
+        // 데이터 미리 세팅
+        document.getElementById('result-img').src = `${currentPick.id}.png`;
+        document.getElementById('result-name').innerText = currentPick.name;
+        document.getElementById('result-work').innerText = currentPick.work;
+        
+        showPage('page-effect');
+    }
+
+    function revealResult() {
+        showPage('page-result');
+        const flash = document.getElementById('flash');
+        flash.style.display = 'block';
+        setTimeout(() => {
+            flash.style.display = 'none';
+        }, 500);
+    }
+</script>
+
+</body>
+</html>
