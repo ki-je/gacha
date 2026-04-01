@@ -66,31 +66,71 @@
             margin-bottom: 5px;
         }
 
-        /* 고급스러운 가챠 버튼 디자인 */
-        .premium-btn {
-            position: relative;
-            margin-top: 40px;
-            padding: 20px 60px;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #4a3200;
-            background: linear-gradient(135deg, var(--gold-light), var(--gold-main), var(--gold-dark));
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 0 20px rgba(255, 207, 64, 0.4), inset 0 0 10px rgba(255,255,255,0.5);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+/* 네온사인 버튼 디자인 */
+.premium-btn {
+    position: relative;
+    margin-top: 40px;
+    padding: 20px 60px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    
+    /* 배경 및 테두리 */
+    background: transparent;
+    color: #0fa; /* 네온 민트 색상 */
+    border: 3px solid #0fa;
+    border-radius: 10px; /* 약간 각진 느낌이 네온에 잘 어울림 */
+    
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: all 0.3s;
 
-        .premium-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 40px rgba(255, 207, 64, 0.8);
-            filter: brightness(1.1);
-        }
+    /* 네온 발광 효과 (바깥쪽과 안쪽 모두) */
+    text-shadow: 
+        0 0 7px #fff,
+        0 0 10px #0fa,
+        0 0 21px #0fa;
+    box-shadow: 
+        0 0 5px #0fa,
+        inset 0 0 5px #0fa,
+        0 0 15px #0fa,
+        inset 0 0 15px #0fa;
+}
 
-        .premium-btn:active { transform: scale(0.95); }
+/* 호버 시 불빛이 강해지는 효과 */
+.premium-btn:hover {
+    color: #fff;
+    background: #0fa;
+    box-shadow: 
+        0 0 10px #0fa,
+        0 0 30px #0fa,
+        0 0 60px #0fa;
+    text-shadow: none;
+}
+
+/* 클릭 시 살짝 들어가는 느낌 */
+.premium-btn:active {
+    transform: scale(0.98);
+    filter: brightness(0.8);
+}
+
+/* 가끔씩 지지직거리는 네온 애니메이션 (선택사항) */
+@keyframes flicker {
+    0%, 18%, 22%, 25%, 53%, 57%, 100% {
+        text-shadow: 0 0 7px #fff, 0 0 10px #0fa, 0 0 21px #0fa;
+        box-shadow: 0 0 5px #0fa, inset 0 0 5px #0fa, 0 0 15px #0fa, inset 0 0 15px #0fa;
+    }
+    20%, 24%, 55% {       
+        text-shadow: none;
+        box-shadow: none;
+        opacity: 0.5;
+    }
+}
+
+/* 애니메이션 적용 (버튼에 생동감을 주려면 추가) */
+#page2 .premium-btn {
+    animation: flicker 3s infinite alternate;
+}
 
         /* 페이지 2: 가챠 대기 (배경만) */
         #page2 { background-image: url('B.png'); }
